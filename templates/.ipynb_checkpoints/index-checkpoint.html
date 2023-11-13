@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-GPSCS</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* Ensure content takes at least the full height of the viewport */
+            position: relative; /* Needed for the sticky footer */
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f8ff; /* Light Blue background color */
+            color: #333; /* Dark Gray text color */
+        }
+
+        h1 {
+            background-color: #87CEEB; /* Sky Blue background color for headers */
+            color: #fff; /* White text color for headers */
+            padding: 10px;
+            margin: 20 px 0;
+        }
+
+        #content {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding: 20px;
+        }
+
+        .summary {
+            width: 45%;
+            background-color: #fff; /* White background color for summary boxes */
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Shadow effect */
+        }
+
+        footer {
+            background-color: #87CEEB; /* Sky Blue background color for footer */
+            color: #fff; /* White text color for footer */
+            padding: 10px;
+            text-align: center;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+
+        /* Style for custom file input */
+        .custom-file-input-label {
+            display: inline-block;
+            padding: 8px 12px;
+            cursor: pointer;
+            background-color: #3498db; /* Button background color */
+            color: #fff; /* Button text color */
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .custom-file-input-label:hover {
+            background-color: #2980b9; /* Button background color on hover */
+        }
+
+        /* Hide the actual file input */
+        #fileInput {
+            display: none;
+        }
+        
+        #loadingMessage {
+            display: none;
+            margin-top: 20px;
+            font-size: 18px;
+            color: #555;
+        }
+
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</head>
+<body>
+    <h1 id="pageTitle">AI-GPSCS: AI-Generated Plot Summaries for Children's Stories</h1>
+
+    <form id="summaryForm" action="/generate_summary" method="post" enctype="multipart/form-data">
+        <!-- Language selection dropdown -->
+        <label for="languageSelect" id="languageLabel">Select Language:</label>
+        <select id="languageSelect" name="language">
+            <option value="english">English</option>
+            <option value="spanish">Español</option>
+        </select>
+
+        <!-- New div for "Choose File" and "Generate Summary" buttons with margin-top -->
+        <div style="margin-top: 10px;">
+            <!-- Custom file input -->
+            <label for="fileInput" class="custom-file-input-label" id="fileInputLabel">Choose File</label>
+            <input type="file" name="selected_file" accept="image/*" id="fileInput" onchange="updateFileName(this)" required>
+
+            <!-- Display the selected file name -->
+            <span id="selectedFileName"></span>
+
+            <!-- Submit button with the same style as "Choose File" button -->
+            <input type="submit" value="Generate Summary" class="custom-file-input-label" id="submitButton">
+        </div>
+
+        <script>
+            // JavaScript function to update the selected file name
+            function updateFileName(input) {
+                const fileName = input.files[0].name;
+                document.getElementById('selectedFileName').textContent = fileName;
+            }
+        </script>
+        
+    <div id="loadingMessage">
+        <div class="loader"></div>
+        <p id="loadingText"></p>
+    </div>
+
+    </form>
+
+        <!-- Display the selected image if available -->
+        {% if result %}
+        <p>{{ result.filename }}</p>
+
+        <!-- Display the image -->
+        <img src="data:image/png;base64,{{ result.encoded_image }}" alt="{{ result.filename }}" style="max-width: 100px;">
+
+        <!-- Display the strings in columns -->
+        <div id="content">
+            {% for string in result.additional_strings %}
+                <div class="summary">
+                    <h2>Summary {{ loop.index }}</h2>
+                    <pre style="white-space: pre-wrap;">{{ string }}</pre>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    <footer>
+        <p id="footerText">Made by Cassandra Pratt Romero</p>
+    </footer>
+
+    <!-- Add JavaScript to change language dynamically -->
+    <script>
+        $(document).ready(function() {
+            // Function to set a cookie with a given name, value, and expiration date
+            function setCookie(name, value, days) {
+                const expires = new Date();
+                expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+                document.cookie = name + '=' + value + ';expires=' + expires.toUTCString();
+            }
+
+            // Function to get the value of a cookie by name
+            function getCookie(name) {
+                const cookies = document.cookie.split('; ');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].split('=');
+                    if (cookie[0] === name) {
+                        return cookie[1];
+                    }
+                }
+                return null;
+            }
+            
+            // Define language-specific text
+            const languageText = {
+                'english': {
+                    'pageTitle': 'AI-GPSCS: AI-Generated Plot Summaries for Children\'s Stories',
+                    'languageLabel': 'Select Language:',
+                    'submitButton': 'Generate Summary',
+                    'fileInputLabel': 'Choose File',
+                    'footerText': 'Made by Cassandra Pratt Romero',
+                    'loadingText': 'Generating summary...',
+                    'summaryHeader': 'Summary',
+                },
+                'spanish': {
+                    'pageTitle': 'AI-GPSCS: Resúmenes de trama generados por IA para historias infantiles',
+                    'languageLabel': 'Seleccionar Idioma:',
+                    'submitButton': 'Generar Resumen',
+                    'fileInputLabel': 'Elegir Archivo',
+                    'footerText': 'Hecho por Cassandra Pratt Romero',
+                    'loadingText': 'Generando resumen...',
+                    'summaryHeader': 'Resumen',
+                },
+            };
+
+            // Initial language setting
+            const defaultLanguage = getCookie('selectedLanguage') || 'english';
+            updateLanguage(defaultLanguage);
+            
+            // Set the dropdown selection based on the stored language
+            $('#languageSelect').val(defaultLanguage);
+
+            // Language dropdown change event
+            $('#languageSelect').change(function() {
+                const selectedLanguage = $(this).val();
+                updateLanguage(selectedLanguage);
+                // Save selected language to a cookie
+                setCookie('selectedLanguage', selectedLanguage, 30); // Cookie expires in 30 days
+            });
+
+            function updateLanguage(language) {
+                // Update language label
+                $('#languageLabel').text(languageText[language]['languageLabel']);
+
+                // Update submit button text
+                $('#submitButton').val(languageText[language]['submitButton']);
+
+                // Update file input label
+                $('#fileInputLabel').text(languageText[language]['fileInputLabel']);                
+
+                // Update footer text
+                $('#footerText').text(languageText[language]['footerText']);
+
+                // Update loading text
+                $('#loadingText').text(languageText[language]['loadingText']);
+                
+                // Update summary headers
+                $('.summary h2').each(function (index) {
+                    $(this).text(languageText[language]['summaryHeader'] + ' ' + (index + 1));
+                });
+            }
+
+             $('#summaryForm').submit(function() {
+                // Delay the disabling of input elements
+                setTimeout(function() {
+                    $('#loadingMessage').show();
+                    $('#fileInput, #submitButton').prop('disabled', true);
+                }, 100);
+            });
+        });
+    </script>
+</body>
+</html>
