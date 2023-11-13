@@ -1,9 +1,0 @@
-Flask==2.2.2
-openai==0.28.1
-torch==2.1.0
-transformers==4.32.1
-Pillow==9.4.0
-azure-storage-blob==12.19.0
-azure-keyvault-secrets==4.7.0
-azure-identity==1.15.0
-huggingface-hub==0.15.1
