@@ -110,7 +110,7 @@
         <div style="margin-top: 10px;">
             <!-- Custom file input -->
             <label for="fileInput" class="custom-file-input-label" id="fileInputLabel">Choose File</label>
-            <input type="file" name="selected_file" accept="image/*" id="fileInput" onchange="updateFileName(this)">
+            <input type="file" name="selected_file" accept="image/*" id="fileInput" onchange="updateFileName(this)" required>
 
             <!-- Display the selected file name -->
             <span id="selectedFileName"></span>
@@ -136,7 +136,7 @@
 
         <!-- Display the selected image if available -->
         {% if result %}
-        <p>Filename: {{ result.filename }}</p>
+        <p>{{ result.filename }}</p>
 
         <!-- Display the image -->
         <img src="data:image/png;base64,{{ result.encoded_image }}" alt="{{ result.filename }}" style="max-width: 100px;">
@@ -159,6 +159,25 @@
     <!-- Add JavaScript to change language dynamically -->
     <script>
         $(document).ready(function() {
+            // Function to set a cookie with a given name, value, and expiration date
+            function setCookie(name, value, days) {
+                const expires = new Date();
+                expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+                document.cookie = name + '=' + value + ';expires=' + expires.toUTCString();
+            }
+
+            // Function to get the value of a cookie by name
+            function getCookie(name) {
+                const cookies = document.cookie.split('; ');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].split('=');
+                    if (cookie[0] === name) {
+                        return cookie[1];
+                    }
+                }
+                return null;
+            }
+            
             // Define language-specific text
             const languageText = {
                 'english': {
@@ -168,6 +187,7 @@
                     'fileInputLabel': 'Choose File',
                     'footerText': 'Made by Cassandra Pratt Romero',
                     'loadingText': 'Generating summary...',
+                    'summaryHeader': 'Summary',
                 },
                 'spanish': {
                     'pageTitle': 'AI-GPSCS: Resúmenes de trama generados por IA para historias infantiles',
@@ -176,17 +196,23 @@
                     'fileInputLabel': 'Elegir Archivo',
                     'footerText': 'Hecho por Cassandra Pratt Romero',
                     'loadingText': 'Generando resumen...',
+                    'summaryHeader': 'Resumen',
                 },
             };
 
             // Initial language setting
-            const defaultLanguage = 'english';
+            const defaultLanguage = getCookie('selectedLanguage') || 'english';
             updateLanguage(defaultLanguage);
+            
+            // Set the dropdown selection based on the stored language
+            $('#languageSelect').val(defaultLanguage);
 
             // Language dropdown change event
             $('#languageSelect').change(function() {
                 const selectedLanguage = $(this).val();
                 updateLanguage(selectedLanguage);
+                // Save selected language to a cookie
+                setCookie('selectedLanguage', selectedLanguage, 30); // Cookie expires in 30 days
             });
 
             function updateLanguage(language) {
@@ -204,6 +230,11 @@
 
                 // Update loading text
                 $('#loadingText').text(languageText[language]['loadingText']);
+                
+                // Update summary headers
+                $('.summary h2').each(function (index) {
+                    $(this).text(languageText[language]['summaryHeader'] + ' ' + (index + 1));
+                });
             }
 
              $('#summaryForm').submit(function() {

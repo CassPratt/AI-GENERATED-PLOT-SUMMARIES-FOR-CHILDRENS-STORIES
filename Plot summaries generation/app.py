@@ -23,7 +23,7 @@ def process_image(selected_file):
     resized_image.save(buffered, format="PNG")
     encoded_image = base64.b64encode(buffered.getvalue()).decode('utf-8')
 
-    return encoded_image, original_image.filename
+    return encoded_image, selected_file.filename
 
 @app.route('/')
 def index():
@@ -46,7 +46,7 @@ def generate_summary():
 
     # Additional strings in the result
     #additional_strings = ['String 1', 'String 2']
-    additional_strings = gps.generate_plot_summary(selected_file.filename,language)
+    additional_strings = gps.generate_plot_summary(filename,language)
 
     result = {
         'filename': filename,
