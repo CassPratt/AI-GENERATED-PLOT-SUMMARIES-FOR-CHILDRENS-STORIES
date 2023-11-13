@@ -68,6 +68,29 @@
         #fileInput {
             display: none;
         }
+        
+        #loadingMessage {
+            display: none;
+            margin-top: 20px;
+            font-size: 18px;
+            color: #555;
+        }
+
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
     <!-- Include jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
@@ -103,11 +126,16 @@
                 document.getElementById('selectedFileName').textContent = fileName;
             }
         </script>
+        
+    <div id="loadingMessage">
+        <div class="loader"></div>
+        <p id="loadingText"></p>
+    </div>
 
-            </form>
+    </form>
 
-            <!-- Display the selected image if available -->
-            {% if result %}
+        <!-- Display the selected image if available -->
+        {% if result %}
         <p>Filename: {{ result.filename }}</p>
 
         <!-- Display the image -->
@@ -139,6 +167,7 @@
                     'submitButton': 'Generate Summary',
                     'fileInputLabel': 'Choose File',
                     'footerText': 'Made by Cassandra Pratt Romero',
+                    'loadingText': 'Generating summary...',
                 },
                 'spanish': {
                     'pageTitle': 'AI-GPSCS: Resúmenes de trama generados por IA para historias infantiles',
@@ -146,6 +175,7 @@
                     'submitButton': 'Generar Resumen',
                     'fileInputLabel': 'Elegir Archivo',
                     'footerText': 'Hecho por Cassandra Pratt Romero',
+                    'loadingText': 'Generando resume...',
                 },
             };
 
@@ -171,6 +201,9 @@
 
                 // Update file input label
                 $('#fileInputLabel').text(languageText[language]['fileInputLabel']);
+
+                // Update loading text
+                $('#loadingText').text(languageText[language]['loadingText']);
             }
 
              $('#summaryForm').submit(function() {

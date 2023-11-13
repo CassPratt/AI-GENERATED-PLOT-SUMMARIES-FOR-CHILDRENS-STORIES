@@ -2,6 +2,7 @@ from flask import Flask, render_template, request
 from PIL import Image
 from io import BytesIO
 import base64
+import ai_gpscs as gps
 
 app = Flask(__name__)
 
@@ -44,7 +45,8 @@ def generate_summary():
     language = request.form.get('language', 'english')  # Default to English if not provided
 
     # Additional strings in the result
-    additional_strings = ['String 1', 'String 2']
+    #additional_strings = ['String 1', 'String 2']
+    additional_strings = gps.generate_plot_summary(selected_file.filename,language)
 
     result = {
         'filename': filename,
