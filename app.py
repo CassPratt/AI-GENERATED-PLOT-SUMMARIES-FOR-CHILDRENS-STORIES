@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, Response
 from PIL import Image
 from io import BytesIO
 import base64
@@ -8,6 +8,17 @@ app = Flask(__name__)
 
 # Set a maximum file size (16 MB in this example)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+
+@app.route('/keep_alive')
+def keep_alive():
+    def generate():
+        while True:
+            # Yielding an empty line to keep the connection alive
+            yield '\r\n'
+            # Adjust the sleep duration based on your needs
+            time.sleep(60000)
+
+    return Response(generate(), content_type='text/html', status=200)
 
 def process_image(selected_file):
     try:

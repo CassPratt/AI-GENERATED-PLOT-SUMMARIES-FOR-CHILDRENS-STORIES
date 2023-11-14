@@ -246,5 +246,12 @@
             });
         });
     </script>
+    
+    <script>
+        // Periodically fetch the /keep_alive endpoint to keep the connection alive
+        setInterval(() => {
+            fetch('/keep_alive');
+        }, 600000); // Adjust the interval (in milliseconds) based on your needs
+    </script>
 </body>
 </html>
