@@ -29,6 +29,8 @@
             justify-content: space-between;
             margin-top: 20px;
             padding: 20px;
+            flex-grow: 1; /* Allow the content to grow and fill available space */
+            margin-bottom: 60px; /* Adjust as needed to create space between content and footer */
         }
 
         .summary {
@@ -186,8 +188,8 @@
                     'submitButton': 'Generate Summary',
                     'fileInputLabel': 'Choose File',
                     'footerText': 'Made by Cassandra Pratt Romero',
-                    'loadingText': 'Generating summary...',
-                    'summaryHeader': 'Summary',
+                    'loadingText': 'Generating summary. This can take up to 5 minutes...',
+                    'summaryHeader': '',
                 },
                 'spanish': {
                     'pageTitle': 'AI-GPSCS: Resúmenes de trama generados por IA para historias infantiles',
@@ -195,8 +197,8 @@
                     'submitButton': 'Generar Resumen',
                     'fileInputLabel': 'Elegir Archivo',
                     'footerText': 'Hecho por Cassandra Pratt Romero',
-                    'loadingText': 'Generando resumen...',
-                    'summaryHeader': 'Resumen',
+                    'loadingText': 'Generando resumen. Este paso puede tomar hasta 5 minutos...',
+                    'summaryHeader': '',
                 },
             };
 
@@ -245,13 +247,6 @@
                 }, 100);
             });
         });
-    </script>
-    
-    <script>
-        // Periodically fetch the /keep_alive endpoint to keep the connection alive
-        setInterval(() => {
-            fetch('/keep_alive');
-        }, 600000); // Adjust the interval (in milliseconds) based on your needs
     </script>
 </body>
 </html>

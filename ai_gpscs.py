@@ -19,13 +19,13 @@ checkpoint_greedy = 'CassPR/childrensimages-caption-20231108'
 checkpoint_beam = 'CassPR/childrensimages-caption-20231109'
 
 model_greedy = GitForCausalLM.from_pretrained(checkpoint_greedy)
-model_beam = GitForCausalLM.from_pretrained(checkpoint_beam)
+#model_beam = GitForCausalLM.from_pretrained(checkpoint_beam)
 
 # Check if running on GPU or CPU
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 model_greedy.to(device)
-model_beam.to(device)
+#model_beam.to(device)
 
 logging.info('Loaded Image Captioning models.')
 
@@ -53,12 +53,12 @@ def generate_captions(pil_image):
     generated_caption_greedy = clean_sentence(generated_caption_greedy)
     
     # Beam search model
-    logging.info('Generating caption with beam model...')
-    generated_ids_beam = model_beam.generate(pixel_values=pixel_values, max_length=50)
-    generated_caption_beam = processor.batch_decode(generated_ids_beam, skip_special_tokens=True)[0]
-    generated_caption_beam = clean_sentence(generated_caption_beam)    
+    #logging.info('Generating caption with beam model...')
+    #generated_ids_beam = model_beam.generate(pixel_values=pixel_values, max_length=50)
+    #generated_caption_beam = processor.batch_decode(generated_ids_beam, skip_special_tokens=True)[0]
+    #generated_caption_beam = clean_sentence(generated_caption_beam)    
     
-    return [generated_caption_greedy, generated_caption_beam]
+    return [generated_caption_greedy]#, generated_caption_beam]
 
 # -----------PLOT SUMMARY GENERATION-------------
 import openai
