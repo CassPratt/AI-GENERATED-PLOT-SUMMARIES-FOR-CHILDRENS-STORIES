@@ -189,7 +189,7 @@
                     'fileInputLabel': 'Choose File',
                     'footerText': 'Made by Cassandra Pratt Romero',
                     'loadingText': 'Generating summary. This can take up to 5 minutes...',
-                    'summaryHeader': '',
+                    'summaryHeader': 'Summary',
                 },
                 'spanish': {
                     'pageTitle': 'AI-GPSCS: Resúmenes de trama generados por IA para historias infantiles',
@@ -198,7 +198,7 @@
                     'fileInputLabel': 'Elegir Archivo',
                     'footerText': 'Hecho por Cassandra Pratt Romero',
                     'loadingText': 'Generando resumen. Este paso puede tomar hasta 5 minutos...',
-                    'summaryHeader': '',
+                    'summaryHeader': 'Resumen',
                 },
             };
 
@@ -235,7 +235,7 @@
                 
                 // Update summary headers
                 $('.summary h2').each(function (index) {
-                    $(this).text(languageText[language]['summaryHeader'] + ' ' + (index + 1));
+                    $(this).text(languageText[language]['summaryHeader']);// + ' ' + (index + 1));
                 });
             }
 
