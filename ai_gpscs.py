@@ -1,3 +1,7 @@
+import logging
+
+# Configure the logging module
+logging.basicConfig(level=logging.INFO)
 # -----------IMAGE CAPTIONING-------------
 import torch
 from transformers import GitForCausalLM, AutoProcessor, AutoConfig
