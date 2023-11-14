@@ -32,12 +32,11 @@ def clean_sentence(sentence):
 from PIL import Image
 
 # Function to generate caption
-def generate_captions(img_path):
-    print('Reading image...')
-    image = Image.open(img_path)
+def generate_captions(pil_image):
+    print('Resizing image...')
     new_size = (224, 224)
     # Resize the image
-    resized_image = image.resize(new_size)
+    resized_image = pil_image.resize(new_size)
     
     # prepare image for the model
     inputs = processor(images=resized_image, return_tensors="pt").to(device)
@@ -55,7 +54,7 @@ def generate_captions(img_path):
     generated_caption_beam = processor.batch_decode(generated_ids_beam, skip_special_tokens=True)[0]
     generated_caption_beam = clean_sentence(generated_caption_beam)    
     
-    return resized_image, [generated_caption_greedy, generated_caption_beam]
+    return [generated_caption_greedy, generated_caption_beam]
 
 # -----------PLOT SUMMARY GENERATION-------------
 import openai
@@ -99,13 +98,10 @@ def generate_plot_input(base_instructions,captions=[]):
     return scratchplot_inputs
 
 # Function to generate plot summary
-def generate_plot_summary(image_path, language='english'):
-    
-    if img_root_path != '':
-        image_path = img_root_path + '\\' + image_path
+def generate_plot_summary(pil_image, language='english'):
     
     # Given image path, generate captions (greedy, beam)
-    pil_image, captions = generate_captions(image_path)
+    captions = generate_captions(pil_image)
     
     base_instructions = 'If existing, identify subjects, location and captions or title in the given sentence. Subjects will be called \"characters\" as we will generate a children\'s story based on the sentence content. If no subjects, location or captions or title are provided, based on the sentence generate them, remember to only generate the ones that are missing in given sentence; these fields cannot be blank and all subjects or characters, locations and main themes should be suitable for children\'s stories. With previous information obtained from given sentence, complete the following command by replacing the curly brackets with characters (1, 2, 3, etc.), location and main theme, modifying the command to match as many characters are identified: \"Write a plot summary of a children\'s story featuring {character 1} and {character 2} in {location} with the main title {title}.\" Example of a sentence: a boy and mom with a dog and the title \"Family love\". Generated command: \"Write a plot summary of a children\'s story featuring a boy and his mom and a dog in an enchanted mansion with the title \"Family love\". Please show only the generated command and follow the format exactly. Sentence to analyze is at the end of this command.'
            

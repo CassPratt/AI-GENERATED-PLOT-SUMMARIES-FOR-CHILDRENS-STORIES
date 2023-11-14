@@ -23,7 +23,7 @@ def process_image(selected_file):
     resized_image.save(buffered, format="PNG")
     encoded_image = base64.b64encode(buffered.getvalue()).decode('utf-8')
 
-    return encoded_image, selected_file.filename
+    return original_image, encoded_image, selected_file.filename
 
 @app.route('/')
 def index():
@@ -37,7 +37,7 @@ def generate_summary():
     selected_file = request.files['selected_file']
 
     try:
-        encoded_image, filename = process_image(selected_file)
+        pil_image, encoded_image, filename = process_image(selected_file)
     except ValueError as e:
         return render_template('error.html', error=str(e))
     
@@ -46,7 +46,7 @@ def generate_summary():
 
     # Additional strings in the result
     #additional_strings = ['String 1', 'String 2']
-    additional_strings = gps.generate_plot_summary(filename,language)
+    additional_strings = gps.generate_plot_summary(pil_image,language)
 
     result = {
         'filename': filename,
