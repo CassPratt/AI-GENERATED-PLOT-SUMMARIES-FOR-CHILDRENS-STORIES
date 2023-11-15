@@ -6,10 +6,6 @@ logging.basicConfig(level=logging.INFO)
 import torch
 from transformers import GitForCausalLM, AutoProcessor, AutoConfig
 
-global img_root_path
-
-img_root_path = 'C:\\Users\\caprattr\\repos\\AI-GENERATED-PLOT-SUMMARIES-FOR-CHILDRENS-STORIES\\Datasets\\childrens-books-test'
-
 # Load processor
 base_checkpoint = 'microsoft/git-large-r-coco'
 processor = AutoProcessor.from_pretrained(base_checkpoint)
@@ -37,7 +33,7 @@ from PIL import Image
 
 # Function to generate caption
 def generate_captions(pil_image):
-    logging.info('Resizing image...')
+    logging.info(f'UserId {userId}: Resizing image...')
     new_size = (224, 224)
     # Resize the image
     resized_image = pil_image.resize(new_size)
@@ -47,7 +43,7 @@ def generate_captions(pil_image):
     pixel_values = inputs.pixel_values
     
     # Greedy search model
-    logging.info('Generating caption with greedy model...')
+    logging.info(f'UserId {userId}: Generating caption with greedy model...')
     generated_ids_greedy = model_greedy.generate(pixel_values=pixel_values, max_length=50)
     generated_caption_greedy = processor.batch_decode(generated_ids_greedy, skip_special_tokens=True)[0]
     generated_caption_greedy = clean_sentence(generated_caption_greedy)
@@ -85,7 +81,7 @@ def call_chatgpt(instructions):
 
 # Function to format caption to generate a command
 def format_caption(idx, instructions):    
-    logging.info('Formatting caption {0} as an input command...'.format(idx))
+    logging.info(f'UserId {userId}: Formatting caption {0} as an input command...'.format(idx))
     reply = call_chatgpt(instructions)
     if '{character 1}' in reply or '{character 2}' in reply or '{location}' in reply or '{theme}' in reply:
         reply = call_chatgpt(instructions)
@@ -93,7 +89,7 @@ def format_caption(idx, instructions):
 
 # Function to generate plot summary creation command
 def generate_plot_input(base_instructions,captions=[]):
-    logging.info('Starting the plot input commands generation...')
+    logging.info(f'UserId {userId}: Starting the plot input commands generation...')
     scratchplot_inputs = []
     for idx, caption in enumerate(captions):
         instructions = base_instructions + caption
@@ -104,6 +100,10 @@ def generate_plot_input(base_instructions,captions=[]):
 # Function to generate plot summary
 def generate_plot_summary(pil_image, language='english'):
     
+    from random import randint
+    global userId
+    userId = randint(1,1000000)
+    
     # Given image path, generate captions (greedy, beam)
     captions = generate_captions(pil_image)
     
@@ -111,16 +111,16 @@ def generate_plot_summary(pil_image, language='english'):
            
     # Generate the plot input command
     plot_inputs = generate_plot_input(base_instructions, captions)
-    logging.info('Generated inputs: {0}'.format(plot_inputs))
+    logging.info(f'UserId {userId}: Generated inputs: {0}'.format(plot_inputs))
     
     # For each plot input command generate a plot summary
     plot_security = ' As it is a story for children, it does not use discriminatory, offensive, racist, religious language, or any topic that incites violence or hatred.'
     plot_language = ' Write the output in ' + language
     plot_summaries = []
     for idx, pl_input in enumerate(plot_inputs):
-        logging.info('Generating plot summary for input command {0}...'.format(idx+1))
+        logging.info(f'UserId {userId}: Generating plot summary for input command {0}...'.format(idx+1))
         plot_summaries.append(call_chatgpt(pl_input + plot_security + plot_language))
     
-    logging.info(plot_summaries)
+    logging.info(f'UserId {userId}: {plot_summaries}')
     
     return plot_summaries
