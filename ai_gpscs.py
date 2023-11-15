@@ -111,7 +111,7 @@ def generate_plot_summary(pil_image, language='english'):
            
     # Generate the plot input command
     plot_inputs = generate_plot_input(base_instructions, captions)
-    logging.info(f'UserId {userId}: Generated inputs: {0}'.format(plot_inputs))
+    logging.info(f'UserId {userId}: Generated inputs: {plot_inputs}')
     
     # For each plot input command generate a plot summary
     plot_security = ' As it is a story for children, it does not use discriminatory, offensive, racist, religious language, or any topic that incites violence or hatred.'
