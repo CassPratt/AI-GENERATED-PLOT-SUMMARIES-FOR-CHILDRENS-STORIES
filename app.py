@@ -3,6 +3,10 @@ from PIL import Image
 from io import BytesIO
 import base64
 import ai_gpscs as gps
+import logging
+
+# Configure the logging module
+logging.basicConfig(level=logging.INFO)
 
 app = Flask(__name__)
 
@@ -51,6 +55,8 @@ def generate_summary():
         pil_image, encoded_image, filename = process_image(selected_file)
     except ValueError as e:
         return render_template('error.html', error=str(e))
+
+    logging.info(f'Selected file name: {filename}')
     
     # Get the selected language from the form
     language = request.form.get('language', 'english')  # Default to English if not provided
