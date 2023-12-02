@@ -1,4 +1,6 @@
 # AI-GPSCS: AI-Generated Plot Summaries for Children's Stories
+**By Cassandra Pratt Romero**
+
 The main aim of the research is to develop an automated system that generates engaging and age-appropriate plot summaries for children's stories based on image descriptions. The research aims to leverage the fields of NLP, computer vision, and storytelling to create a novel pipeline that integrates image description generation and plot summaries generation.
 
 ## Repository structure
@@ -14,5 +16,3 @@ Folders:
 
 ### Web app code
 Branch called "onlywebapp" contains the code for the system web app, when updated it is automatically deployed to an Azure Web App resource.
-
-# Contributed by Cassandra Pratt Romero
